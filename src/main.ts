@@ -13,7 +13,13 @@ async function bootstrap() {
   );
 
   // app.enableCors();
-  app.enableCors({ origin: 'http://localhost:5173', credentials: true });
+  app.enableCors({
+    origin: [
+      'http://localhost:5173',
+      'https://dev-samurai-demo-frontend.vercel.app'
+    ],
+    credentials: true
+  });
 
   await app.listen(process.env.PORT ?? 3000);
 }
