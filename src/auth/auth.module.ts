@@ -10,4 +10,4 @@ import { RtStrategy } from './strategy/rt.strategy';
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, RtStrategy],
 })
-export class AuthModule { }
+export class AuthModule {}

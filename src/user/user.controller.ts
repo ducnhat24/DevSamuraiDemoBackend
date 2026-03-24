@@ -4,10 +4,9 @@ import type { Request } from 'express';
 
 @Controller('users')
 export class UserController {
-
-    @UseGuards(AuthGuard('jwt'))
-    @Get('me')
-    getMe(@Req() req: Request) {
-        return req.user;
-    }
+  @UseGuards(AuthGuard('jwt'))
+  @Get('me')
+  getMe(@Req() req: Request) {
+    return req.user;
+  }
 }
