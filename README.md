@@ -1,98 +1,86 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Acme Analytics Dashboard - Backend API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A robust, scalable, and secure RESTful API built to power the Acme Analytics Dashboard. Developed as part of a 48-hour technical sprint, this backend focuses on clean architecture, type safety, and efficient database interactions.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Live API
+- **Base URL:** [https://coral-app-gim35.ondigitalocean.app]https://coral-app-gim35.ondigitalocean.app)
+- **Frontend Repository:** [https://github.com/ducnhat24/DevSamuraiDemoFrontend](https://github.com/ducnhat24/DevSamuraiDemoFrontend)
 
-## Description
+## Key Features
+- **Secure Authentication:** Implemented robust JWT-based authentication (Access & Refresh tokens) with password hashing.
+- **Relational Data Modeling:** Designed a structured PostgreSQL database schema using Prisma ORM for type-safe database queries.
+- **Modular Architecture:** Utilized NestJS's dependency injection and modular structure (Auth, User modules) to keep the codebase maintainable and scalable.
+- **Production-Ready Deployment:** Configured for cloud deployment on DigitalOcean App Platform, integrating seamlessly with Supabase's IPv6 connection pooling.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Technology Stack
+- **Framework:** NestJS (Node.js)
+- **Language:** TypeScript
+- **ORM:** Prisma
+- **Database:** PostgreSQL (Hosted on Supabase)
+- **Security:** Passport.js, JWT, bcrypt
+- **Package Manager:** pnpm
 
-## Project setup
+---
 
+## Assumptions & Trade-offs
+
+Building a fully functional backend within a 48-hour window requires strategic prioritization. Here are the technical trade-offs and decisions made:
+
+1. **Monolithic Architecture vs. Microservices:**
+   - *Trade-off:* Chosen a monolithic structure using NestJS.
+   - *Reasoning:* For an application of this scale and a tight deadline, a monolith significantly reduces infrastructure overhead while NestJS ensures the codebase remains strictly organized and easily splittable in the future.
+2. **Database Hosting & IPv6 Constraints:**
+   - *Trade-off:* Used Supabase Free Tier, which recently dropped IPv4 support, causing conflicts with CI/CD runners (like DigitalOcean/Render) that rely on IPv4.
+   - *Reasoning:* Instead of paying for a managed database instance, I engineered a workaround using Supabase's Connection Pooler (port 6543) with `pgbouncer=true` for standard queries, and a separate `DIRECT_URL` (session mode) specifically for Prisma migrations. This demonstrates resourcefulness and DevOps problem-solving skills.
+3. **Automated Testing Coverage:**
+   - *Trade-off:* While the testing scaffolding is set up (Jest, `.spec.ts`, and `e2e` configurations are present), comprehensive test coverage was traded for core feature completion and deployment troubleshooting.
+   - *Reasoning:* The priority was delivering a working, deployed, and integrated product. The existing test setup serves as a foundation for immediate implementation in the next development cycle.
+
+---
+
+## Setup Instructions (Local Development)
+
+### 1. Prerequisites
+- Node.js (v18 or higher)
+- pnpm (Recommended)
+- A running PostgreSQL database (Local or Cloud)
+
+### 2. Installation
+Clone the repository and install dependencies:
 ```bash
-$ pnpm install
+git clone https://github.com/ducnhat24/devsamuraidemobackend.git
+pnpm install
 ```
 
-## Compile and run the project
+### 3. Environment Variables
+Create a `.env` file in the root directory. You will need to set up your database connection strings and JWT secrets:
+```env
+# Database connection (Transaction mode for queries)
+DATABASE_URL="postgresql://[USER]:[PASSWORD]@[HOST]:[PORT]/[DATABASE]?pgbouncer=true"
 
+# Direct database connection (Session mode for migrations)
+DIRECT_URL="postgresql://[USER]:[PASSWORD]@[HOST]:[PORT]/[DATABASE]"
+
+# JWT Secrets
+JWT_ACCESS_SECRET="your-super-secret-access-key"
+JWT_REFRESH_SECRET="your-super-secret-refresh-key"
+```
+
+### 4. Database Setup
+Run Prisma migrations to generate the client and apply the schema to your database:
 ```bash
-# development
-$ pnpm run start
+npx prisma generate
+npx prisma migrate dev
+```
 
-# watch mode
-$ pnpm run start:dev
+### 5. Run the Application
+```bash
+# development mode
+pnpm run start:dev
 
 # production mode
-$ pnpm run start:prod
+pnpm run start:prod
 ```
+The API will be available at `http://localhost:3000`.
 
-## Run tests
-
-```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+---
